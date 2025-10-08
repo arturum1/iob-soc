@@ -16,7 +16,7 @@ include $(ROOT_DIR)/software/auto_sw_build.mk
 GET_MACRO = $(shell grep "define $(1)" $(2) | rev | cut -d" " -f1 | rev)
 
 #Function to obtain parameter named $(1) from iob_soc_conf.vh
-GET_IOB_SOC_CONF_MACRO = $(call GET_MACRO,IOB_SOC_$(1),../src/iob_soc_conf.vh)
+GET_IOB_SOC_CONF_MACRO = $(call GET_MACRO,IOB_SOC_$(1),$(ROOT_DIR)/hardware/src/iob_soc_conf.vh)
 
 iob_soc_bootrom.hex: ../../software/iob_soc_preboot.bin ../../software/iob_soc_boot.bin
 	../../scripts/makehex.py $^ 00000080 $(call GET_IOB_SOC_CONF_MACRO,BOOTROM_ADDR_W) $@
@@ -32,7 +32,8 @@ iob_soc_firmware.bin: ../../software/iob_soc_firmware.bin
 	make -C ../../ fw-build
 
 UTARGETS+=build_iob_soc_software tb
-CSRS=./src/iob_uart_csrs.c
+TB_SRC=./simulation/src/iob_uart_csrs.c
+TB_INCLUDES ?=-I./simulation/src
 
 TEMPLATE_LDS=src/$@.lds
 
